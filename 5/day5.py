@@ -25,3 +25,38 @@ def part_one():
 
 
 #print(part_one())
+
+def part_two():
+
+    with open("input.txt") as f:
+        full_text = f.read().strip()
+        orderings, sequences = full_text.split("\n\n")
+        orderings = orderings.split("\n")
+
+        sequences = sequences.split("\n")
+        invalid_sequences = [s for s in sequences if not is_valid(s, orderings)]
+
+        adjacency_matrix = {}
+        for o in orderings:
+            a, b = o.split("|")
+            adjacency_matrix[a] = adjacency_matrix.get(a, []) + [b]
+
+        total = 0
+        for s in invalid_sequences:
+            numbers = s.strip().split(",")
+
+            sorted_numbers = []
+            while len(numbers) > 0:
+                for i, n in enumerate(numbers):
+                    other_numbers = numbers[:i] + numbers[i+1:]
+                    if all(m in adjacency_matrix.get(n, []) for m in other_numbers):
+                        sorted_numbers.append(int(n))
+                        numbers.pop(i) 
+                        break
+
+            total += sorted_numbers[len(sorted_numbers)//2]
+
+    return total
+
+
+#print(part_two())
